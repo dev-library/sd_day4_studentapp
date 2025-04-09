@@ -5,9 +5,10 @@
 </head>
 <body>
     <h1>학생 목록</h1>
+	<a th:href="@{/students/new}">학생추가하기</a>
+    <br>
 
-    <a th:href="@{/students/new}">새 학생 등록</a>
-
+    <!-- 학생 목록 테이블 -->
     <table border="1">
         <thead>
             <tr>
@@ -20,7 +21,7 @@
         <tbody>
             <tr th:each="student : ${students}">
                 <td th:text="${student.name}">이름</td>
-                <td th:text="${student.birthDate != null ? student.birthDate : 'N/A'}">생년월일</td>
+                <td th:text="${student.birthDate}">생년월일</td>
                 <td th:text="${student.nationality}">국적</td>
                 <td>
                     <a th:href="@{|/students/${student.id}|}">보기</a>
@@ -28,5 +29,25 @@
             </tr>
         </tbody>
     </table>
+
+    <br>
+	<!-- 검색 폼 -->
+	<form action="/students" method="get">
+	    <label for="name">이름:</label>
+	    <input type="text" id="name" name="name" placeholder="이름 검색" th:value="${param.name}">
+	    <br>
+
+	    <label for="fromDate">생년월일 (시작):</label>
+	    <input type="date" id="fromDate" name="fromDate" th:value="${param.fromDate}">
+	    <br>
+
+	    <label for="toDate">생년월일 (끝):</label>
+	    <input type="date" id="toDate" name="toDate" th:value="${param.toDate}">
+	    <br>
+
+	    <button type="submit">검색</button>
+	</form>
+	
+    <a th:href="@{/students}">검색 조건 초기화</a>
 </body>
 </html>

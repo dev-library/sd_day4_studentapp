@@ -5,6 +5,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.samsungdisplay.student.document.Student;
+import com.samsungdisplay.student.dto.StudentSearchRequest;
 import com.samsungdisplay.student.service.StudentService;
 
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,50 @@ public class StudentController {
 
     private final StudentService studentService;
 
-    // 전체 목록 보기
+    // 학생 목록 및 검색 기능 처리
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("students", studentService.findAll());
-        return "students/list";
-    }
+    public String list(
+        @RequestParam(value = "name", required = false) String name,
+        @RequestParam(value = "fromDate", required = false) String fromDate,
+        @RequestParam(value = "toDate", required = false) String toDate,
+        Model model) {
 
+        // 검색 조건을 DTO에 담아서 전달
+        StudentSearchRequest request = new StudentSearchRequest();
+
+        // 조건이 없으면 전체 조회
+        if (name == null && fromDate == null && toDate == null) {
+            List<Student> students = studentService.findAll();
+            System.out.println("풀검색" + students.toString());
+            model.addAttribute("students", students);
+            return "students/list";  // 전체 학생 목록을 보여주는 페이지
+        }
+
+        // 검색 조건을 설정
+        request.setName(name);
+
+        // 날짜 포맷이 있으면 설정
+        try {
+            if (fromDate != null && !fromDate.isEmpty()) {
+                request.setFromDate(LocalDate.parse(fromDate)); // LocalDate 포맷 변환
+            }
+            if (toDate != null && !toDate.isEmpty()) {
+                request.setToDate(LocalDate.parse(toDate));
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", "날짜 포맷이 잘못되었습니다.");
+            return "students/list";  // 잘못된 날짜 입력 처리
+        }
+
+        // 검색 요청 처리
+        List<Student> students = studentService.search(request);
+        System.out.println("인육" + students.toString());
+
+        // 모델에 결과 전달
+        model.addAttribute("students", students);
+        return "students/list";  // 검색된 목록을 보여주는 페이지
+    }
+    
     // 생성 폼
     @GetMapping("/new")
     public String newStudentForm(Model model) {
@@ -104,4 +143,5 @@ public class StudentController {
         studentService.deleteById(id);
         return "redirect:/students";
     }
+    
 }
