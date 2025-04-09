@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>학생 정보 입력</title>
+</head>
+<body>
+    <h1 th:text="${student.id == null} ? '학생 등록' : '학생 수정'"></h1>
+
+    <form th:action="${student.id == null} ? @{/students} : @{'/students/' + ${student.id}}" method="post">
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name" th:value="${student.name}" required>
+        <br>
+
+        <label for="birthDate">생년월일:</label>
+        <input type="date" id="birthDate" name="birthDate"
+               th:value="${student.birthDate != null ? student.birthDate : ''}" required>
+        <br>
+
+        <label for="nationality">국적:</label>
+        <input type="text" id="nationality" name="nationality" th:value="${student.nationality}" required>
+        <br>
+
+        <h3>과목 점수</h3>
+
+        <label for="korean">국어:</label>
+        <input type="number" id="korean" name="korean" min="0" max="100"
+               th:value="${student.subjectScores != null ? student.subjectScores['korean'] : ''}"><br>
+
+        <label for="english">영어:</label>
+        <input type="number" id="english" name="english" min="0" max="100"
+               th:value="${student.subjectScores != null ? student.subjectScores['english'] : ''}"><br>
+
+        <label for="math">수학:</label>
+        <input type="number" id="math" name="math" min="0" max="100"
+               th:value="${student.subjectScores != null ? student.subjectScores['math'] : ''}"><br>
+
+        <button type="submit">저장</button>
+    </form>
+
+    <br>
+    <a th:href="@{/students}">목록으로</a>
+</body>
+</html>

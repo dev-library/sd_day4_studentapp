@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>학생 상세 정보</title>
+</head>
+<body>
+    <h1>학생 상세 정보</h1>
+
+    <p><strong>이름:</strong> <span th:text="${student.name}"></span></p>
+
+    <p><strong>생년월일:</strong> 
+        <span th:text="${student.birthDate != null ? student.birthDate : 'N/A'}"></span>
+    </p>
+
+    <p><strong>국적:</strong> <span th:text="${student.nationality}"></span></p>
+
+    <h3>과목별 점수</h3>
+    <ul>
+        <li th:each="entry : ${student.subjectScores}">
+            <span th:text="${entry.key}">과목</span>: 
+            <span th:text="${entry.value}">점수</span>
+        </li>
+    </ul>
+
+    <a th:href="@{|/students/${student.id}/edit|}">수정</a>
+    <form th:action="@{|/students/${student.id}/delete|}" method="post" style="display:inline;">
+        <button type="submit">삭제</button>
+    </form>
+
+    <br><br>
+    <a th:href="@{/students}">목록으로</a>
+</body>
+</html>
